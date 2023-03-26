@@ -5,8 +5,6 @@ const {
     sequelize
 } = require('../models/index');
 const moment = require('moment')
-const momentTz = require('moment-timezone')
-const httpResponseCode = require('../misc/const/httpResponseCode')
 
 const createCategory = async (req, res) => {
     try {        
@@ -17,7 +15,7 @@ const createCategory = async (req, res) => {
             updatedAt: Date.now(),
         })
 
-        res.status(httpResponseCode.CREATED).send({
+        res.status(201).send({
             status: res.statusCode,
             message: "Success",
             data
@@ -96,7 +94,7 @@ const updateCategory = async (req, res) => {
 
         if (category == null) {
             res.status(404).send({
-                status: 'Not Found',
+                status: res.statusCode,
                 message: `Category with ID ${req.params.id} Not Found`,
                 data: category
             })
@@ -104,8 +102,8 @@ const updateCategory = async (req, res) => {
         }
 
         await category.update({
-            name: req.body.name,
-            desc: req.body.desc,
+            name: req.body.name ? req.body.name : category.name,
+            desc: req.body.desc ? req.body.desc : category.desc,
             updatedAt: Date.now(),
         });
 

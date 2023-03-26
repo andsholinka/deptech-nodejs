@@ -7,12 +7,11 @@ const {
 const moment = require('moment')
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const httpResponseCode = require('../misc/const/httpResponseCode')
 
 const createAdmin = async (req, res) => {
     try {
-        let dateString = `${req.body.birth_date} 14:30:00`; // your date string
-        let dateTime = new Date(dateString); // create a new date object from the string
+        let dateString = `${req.body.birth_date} 14:30:00`;
+        let dateTime = new Date(dateString);
         
         const data = await admins.create({
             first_name: req.body.first_name,
@@ -25,7 +24,7 @@ const createAdmin = async (req, res) => {
             updatedAt: Date.now(),
         })
 
-        res.status(httpResponseCode.CREATED).send({
+        res.status(201).send({
             status: res.statusCode,
             message: "Success",
             data
@@ -133,17 +132,18 @@ const updateAdmin = async (req, res) => {
             return
         }
 
-        let date = moment(req.body.birth_date)
-        console.log(date);
-        const birthDate = date.format()
-        console.log(birthDate);
+        var birthDate;
+        if (req.body.birth_date) {
+            let date = moment(req.body.birth_date)
+            birthDate = date.format()
+        }
 
         await admin.update({
-            first_name: req.body.first_name,
-            last_name: req.body.last_name,
-            email: req.body.email,
-            birth_date: birthDate,
-            gender: req.body.gender,
+            first_name: req.body.first_name ? req.body.first_name : admin.first_name,
+            last_name: req.body.last_name ? req.body.last_name : admin.last_name,
+            email: req.body.email ? req.body.email : admin.email,
+            birth_date: req.body.birth_date ? birthDate : admin.birth_date,
+            gender: req.body.gender ? req.body.gender : admin.gender,
             updatedAt: Date.now(),
         });
 
